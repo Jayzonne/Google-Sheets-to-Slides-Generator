@@ -48,10 +48,10 @@ Example:
 ## Template placeholders
 
 In your Google Slides template, use placeholders like:
-{{firstName}}
-{{lastName}}
-{{city}}
-{{company}}
+.{{firstName}}
+.{{lastName}}
+.{{city}}
+.{{company}}
 
 The placeholders must match the column headers exactly.
 
