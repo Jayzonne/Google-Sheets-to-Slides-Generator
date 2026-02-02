@@ -47,13 +47,17 @@ Example:
 
 ## Template placeholders
 
-In your Google Slides template, use placeholders like:
-.{{firstName}}
-.{{lastName}}
-.{{city}}
-.{{company}}
+In your Google Slides template, insert placeholders using double curly braces, for example:
 
-The placeholders must match the column headers exactly.
+    {{firstName}}
+    {{lastName}}
+    {{city}}
+    {{company}}
+
+Each placeholder **must exactly match** a column header in the `database` sheet (case-sensitive).
+
+During generation, placeholders are replaced with the corresponding values from each row.
+
 
 ---
 
