@@ -1,7 +1,7 @@
 /**
  * @file SlidesGenerator.gs
  * Generates a new Google Slides file from a template:
- * - 1 slide per database row
+ * - 1 slide per checked database row
  * - Replaces {{header}} placeholders
  * - Preserves row order using appendSlide()
  */
@@ -56,7 +56,7 @@ class SlidesGenerator {
 
       const replacements = this._buildReplacements_(dataset.headers, row);
 
-      // ✅ appendSlide preserves sheet row order
+      // appendSlide preserves sheet row order
       const newSlide = presentation.appendSlide(templateSlide);
       this._replaceInSlide_(newSlide, replacements);
 
@@ -75,7 +75,13 @@ class SlidesGenerator {
     };
   }
 
-  // "Private" by convention
+  /**
+   * Builds a token->value map from headers + a row.
+   * @param {string[]} headers
+   * @param {Array<*>} row
+   * @return {Object<string,string>}
+   * @private
+   */
   _buildReplacements_(headers, row) {
     const map = {};
     headers.forEach((h, i) => {
@@ -86,7 +92,12 @@ class SlidesGenerator {
     return map;
   }
 
-  // "Private" by convention
+  /**
+   * Replaces tokens in a slide.
+   * @param {GoogleAppsScript.Slides.Slide} slide
+   * @param {Object<string,string>} replacements
+   * @private
+   */
   _replaceInSlide_(slide, replacements) {
     Object.keys(replacements).forEach((token) => {
       slide.replaceAllText(token, replacements[token]);
