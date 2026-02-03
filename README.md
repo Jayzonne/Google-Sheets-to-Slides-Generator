@@ -6,7 +6,8 @@ Google Sheets to Slides Generator is a Google Apps Script (V8 compatible) tool t
 
 ## Features
 
-- Generate **one slide per row** from a Google Sheet
+- Generate **one slide per checked row** from a Google Sheet
+- Checkbox-driven selection via the **To generate** column (column A)
 - Use a **Slides template** with placeholders like `{{firstName}}`
 - Centralized **Configuration sheet**
 - Clean **Restructure the template** action (delete & recreate sheets)
@@ -34,14 +35,16 @@ Controls how slides are generated:
 | TEMPLATE_SLIDE_INDEX | 1-based index of the template slide used as blueprint |
 
 #### database sheet
-Each row generates one slide.
+Only rows where **To generate** is checked will generate a slide.
 
 Example:
 
-| firstName | lastName | city | company |
-|---------|----------|------|---------|
-| Alice | Johnson | Paris | ACME Inc. |
-| Bob | Martin | Lyon | Globex Corp. |
+| To generate | firstName | lastName | city | company |
+|-----------|----------|----------|------|---------|
+| ☑️ | Alice | Johnson | Paris | ACME Inc. |
+| ⬜ | Bob | Martin | Lyon | Globex Corp. |
+
+> Note: Column A is reserved for the `To generate` checkbox. Data headers start from column B.
 
 ---
 
@@ -54,10 +57,10 @@ In your Google Slides template, insert placeholders using double curly braces, f
     {{city}}
     {{company}}
 
-Each placeholder **must exactly match** a column header in the `database` sheet (case-sensitive).
+Each placeholder **must exactly match** a column header in the data columns of the `database` sheet (case-sensitive).  
+The `To generate` checkbox column is excluded from placeholder matching.
 
-During generation, placeholders are replaced with the corresponding values from each row.
-
+During generation, placeholders are replaced with the corresponding values from each checked row.
 
 ---
 
@@ -70,8 +73,9 @@ A custom menu is added to Google Sheets:
 - **Restructure the template**
 
 ### Generate slides
+- Ensures the `To generate` checkbox column exists in **column A**
 - Reads the configuration
-- Counts rows to be generated
+- Uses **only checked rows**
 - Shows a confirmation dialog
 - Generates a new Google Slides file
 
@@ -94,5 +98,4 @@ A custom menu is added to Google Sheets:
 ## License
 
 MIT License
-
 
