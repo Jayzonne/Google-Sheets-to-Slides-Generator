@@ -33,7 +33,7 @@ class ConfigService {
     const values = sheet.getDataRange().getValues();
     const raw = {};
 
-    // Expected format: [Setting, Value, Help], header in row 1
+    // Expected format: [Setting, Value, Help], header in row 1.
     for (let i = 1; i < values.length; i++) {
       const key = String(values[i][0] || '').trim();
       const val = String(values[i][1] || '').trim();
