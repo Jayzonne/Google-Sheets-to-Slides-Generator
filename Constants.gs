@@ -1,6 +1,6 @@
 /**
  * @file Constants.gs
- * Centralized constants for sheet names, config keys, and default values.
+ * Centralized constants for sheet names, config keys, defaults, and styles.
  */
 
 const APP = Object.freeze({
@@ -20,11 +20,19 @@ const CONFIG_KEYS = Object.freeze({
 
 const DEFAULTS = Object.freeze({
   OUTPUT_FILE_NAME: 'Generated Slides - {{date}}',
-  START_ROW: 2,              // 1-based (row 1 is headers)
-  TEMPLATE_SLIDE_INDEX: 1,   // 1-based
+  START_ROW: 2,            // 1-based (row 1 is headers)
+  TEMPLATE_SLIDE_INDEX: 1, // 1-based
+});
+
+/**
+ * Database sheet behavior (checkbox-driven generation).
+ */
+const DB = Object.freeze({
+  GENERATE_HEADER: 'To generate',
+  GENERATE_COL_WIDTH: 120,
 });
 
 const STYLES = Object.freeze({
-  DB_HEADER_BG: '#6495ED',   // cornflower blue
+  DB_HEADER_BG: '#6495ED', // cornflower blue
   DB_HEADER_FG: '#FFFFFF',
 });
