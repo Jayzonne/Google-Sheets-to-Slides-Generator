@@ -13,7 +13,8 @@ class Utils {
   }
 
   /**
-   * Replaces {{date}} token in file name patterns.
+   * Replaces tokens in a file name pattern.
+   * Currently supported: {{date}}
    * @param {string} namePattern
    * @return {string}
    */
