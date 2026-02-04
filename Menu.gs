@@ -10,7 +10,9 @@ class MenuController {
       // Requested order: Generate first, then Restructure
       .addItem('Generate slides', 'generateSlides')
       .addSeparator()
-      .addItem('Restructure the template', 'restructureTemplate')
+      .addItem('Add image', 'addImageConfig')
+      .addSeparator()
+      .addItem('Restruct the template', 'restructureTemplate')
       .addToUi();
   }
 }
