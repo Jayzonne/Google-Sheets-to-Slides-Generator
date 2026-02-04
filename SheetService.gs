@@ -59,6 +59,52 @@ class SheetService {
   }
 
   /**
+   * Appends a new IMAGE_N_* block at the bottom of Configuration sheet.
+   * Minimal config:
+   * - IMAGE_N_FIELD  (db column name)
+   * - IMAGE_N_SOURCE (DRIVE_ID | URL)
+   * - IMAGE_N_FIT    (CONTAIN | STRETCH)
+   */
+  appendImageConfigBlock() {
+  const sheet = this.ss.getSheetByName(APP.CONFIG_SHEET);
+  if (!sheet) throw new Error(`Missing sheet: "${APP.CONFIG_SHEET}". Use "Restructure the template" first.`);
+
+  const lastRow = Math.max(1, sheet.getLastRow());
+
+  const keys =
+    lastRow >= 2
+      ? sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat().map((v) => String(v || '').trim())
+      : [];
+
+  let maxN = 0;
+  keys.forEach((k) => {
+    const m = /^IMAGE_(\d+)_FIELD$/.exec(k);
+    if (m) maxN = Math.max(maxN, Number(m[1]));
+  });
+
+  const n = maxN + 1;
+
+  const rows = [
+    ['', '', ''],
+    [`IMAGE_${n}_FIELD`, '', 'Column name in database (ex: photoId). Placeholder in Slides must be {{photoId}}.'],
+    [`IMAGE_${n}_SOURCE`, IMAGES.SOURCE.DRIVE_ID, 'DRIVE_ID | URL'],
+    [`IMAGE_${n}_FIT`, IMAGES.FIT.COVER, 'CONTAIN | COVER | STRETCH'],
+  ];
+
+  const start = sheet.getLastRow() + 1;
+  sheet.getRange(start, 1, rows.length, 3).setValues(rows);
+
+  sheet.getRange(start, 1, rows.length, 3)
+    .setWrap(true)
+    .setVerticalAlignment('middle');
+
+  for (let r = start; r < start + rows.length; r++) {
+    sheet.setRowHeight(r, 44);
+  }
+  }
+
+
+  /**
    * Ensures "To generate" exists in column A with centered checkboxes.
    *
    * Behavior:
