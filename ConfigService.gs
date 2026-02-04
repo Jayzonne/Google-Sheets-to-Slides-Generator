@@ -4,6 +4,14 @@
  */
 
 /**
+ * @typedef {Object} ImageConfig
+ * @property {number} index
+ * @property {string} field            Column name in database (ex: photoId)
+ * @property {string} source           DRIVE_ID | URL
+ * @property {string} fit              CONTAIN | STRETCH
+ */
+
+/**
  * @typedef {Object} AppConfig
  * @property {string} templateSlidesId
  * @property {string} outputFolderId
@@ -11,6 +19,7 @@
  * @property {string} outputFileNamePattern
  * @property {number} startRow
  * @property {number} templateSlideIndex
+ * @property {ImageConfig[]} images
  */
 
 class ConfigService {
@@ -54,6 +63,8 @@ class ConfigService {
       );
     }
 
+    const images = this._parseImages_(raw);
+
     /** @type {AppConfig} */
     const config = {
       templateSlidesId: raw[CONFIG_KEYS.TEMPLATE_SLIDES_ID],
@@ -62,6 +73,7 @@ class ConfigService {
       outputFileNamePattern: raw[CONFIG_KEYS.OUTPUT_FILE_NAME] || DEFAULTS.OUTPUT_FILE_NAME,
       startRow: Utils.toNumber_(raw[CONFIG_KEYS.START_ROW], DEFAULTS.START_ROW),
       templateSlideIndex: Utils.toNumber_(raw[CONFIG_KEYS.TEMPLATE_SLIDE_INDEX], DEFAULTS.TEMPLATE_SLIDE_INDEX),
+      images,
     };
 
     if (config.startRow < 2) {
@@ -71,6 +83,59 @@ class ConfigService {
       throw new Error(`TEMPLATE_SLIDE_INDEX must be >= 1. Current: ${config.templateSlideIndex}`);
     }
 
+    // Validate image configs
+    config.images.forEach((img) => {
+      if (!img.field) throw new Error(`Invalid image config: IMAGE_${img.index}_FIELD is empty.`);
+      if (![IMAGES.SOURCE.DRIVE_ID, IMAGES.SOURCE.URL].includes(img.source)) {
+        throw new Error(`Invalid image config: IMAGE_${img.index}_SOURCE must be DRIVE_ID | URL. Got: ${img.source}`);
+      }
+      if (![IMAGES.FIT.CONTAIN, IMAGES.FIT.COVER, IMAGES.FIT.STRETCH].includes(img.fit)) {
+        throw new Error(`Invalid image config: IMAGE_${img.index}_FIT must be CONTAIN | COVER | STRETCH. Got: ${img.fit}`);
+      }
+    });
+
+
     return config;
+  }
+
+  /**
+   * Parse IMAGE_N_* blocks from the configuration key/value map.
+   * @param {Object<string,string>} raw
+   * @return {ImageConfig[]}
+   * @private
+   */
+  _parseImages_(raw) {
+    let maxN = 0;
+    Object.keys(raw).forEach((k) => {
+      const m = /^IMAGE_(\d+)_FIELD$/.exec(k);
+      if (m) maxN = Math.max(maxN, Number(m[1]));
+    });
+
+    /** @type {ImageConfig[]} */
+    const images = [];
+
+    for (let n = 1; n <= maxN; n++) {
+      const field = String(raw[`IMAGE_${n}_FIELD`] || '').trim();
+
+      const hasAny =
+        field ||
+        raw[`IMAGE_${n}_SOURCE`] ||
+        raw[`IMAGE_${n}_FIT`];
+
+      if (!hasAny) continue;
+      if (!field) continue;
+
+      const source = String(raw[`IMAGE_${n}_SOURCE`] || IMAGES.SOURCE.DRIVE_ID).trim().toUpperCase();
+      const fit = String(raw[`IMAGE_${n}_FIT`] || IMAGES.FIT.CONTAIN).trim().toUpperCase();
+
+      images.push({
+        index: n,
+        field,
+        source,
+        fit,
+      });
+    }
+
+    return images;
   }
 }
