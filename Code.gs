@@ -21,6 +21,18 @@ function restructureTemplate() {
 }
 
 /**
+ * Menu action: Append a new IMAGE_N_* block to the Configuration sheet.
+ */
+function addImageConfig() {
+  const ui = SpreadsheetApp.getUi();
+  try {
+    new SheetService(SpreadsheetApp.getActiveSpreadsheet()).appendImageConfigBlock();
+  } catch (err) {
+    ui.alert(`Add image failed:\n\n${err && err.message ? err.message : String(err)}`);
+  }
+}
+
+/**
  * Menu action: Generate slides from checked rows in the source sheet.
  * Only rows with "To generate" checked are generated.
  */
