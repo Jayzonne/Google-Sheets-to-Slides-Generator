@@ -36,3 +36,18 @@ const STYLES = Object.freeze({
   DB_HEADER_BG: '#6495ED', // cornflower blue
   DB_HEADER_FG: '#FFFFFF',
 });
+
+/**
+ * Image config enums.
+ */
+const IMAGES = Object.freeze({
+  SOURCE: Object.freeze({
+    DRIVE_ID: 'DRIVE_ID',
+    URL: 'URL',
+  }),
+  FIT: Object.freeze({
+    CONTAIN: 'CONTAIN', // garde proportions, rentre dans la box
+    COVER: 'COVER',     // remplit la box sans déformer (crop)
+    STRETCH: 'STRETCH', // remplit en déformant
+  }),
+});
